@@ -15,10 +15,6 @@ try {
 
 http.listen(8888);
 
-io.on('connection', function () {
-    console.log("Socket.io connection!");
-});
-
 const BUILD_PATH = path.join(__dirname, 'static');
 const SRC_PATH = path.join(__dirname, 'src');
 
@@ -32,11 +28,13 @@ function createWindow () {
     ircClient = new irc.Client(config.irc.server, config.irc.nickname, config.irc.config);
 
     ircClient.addListener('message', function (from, to, message) {
-        io.sockets.emit('channel-message-receive', {
-            from: from,
-            to: to,
-            message: message
-        })
+        if (to.indexOf("#") > -1) {
+            io.sockets.emit('channel-message-receive', {
+                from: from,
+                to: to,
+                message: message
+            });
+        }
     });
 
     ircClient.addListener('pm', function (from, message) {
@@ -44,6 +42,20 @@ function createWindow () {
             from: from,
             message: message
         });
+    });
+
+    io.on('connection', function (socket) {
+        socket.on('send-message', function (data) {
+            ircClient.say(data.to, data.text);
+
+            io.sockets.emit('channel-message-receive', {
+                from: config.irc.nickname,
+                to: data.to,
+                message: data.text
+            });
+        });
+
+        console.log("Socket.io connection!");
     });
 
     // Create the browser window.

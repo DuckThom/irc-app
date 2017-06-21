@@ -6,22 +6,31 @@
             </button>
         </div>
 
-        <div id="buffer-data">
-            <messages v-bind:buffer="activeBuffer"></messages>
+        <buffer-data v-bind:buffer="activeBuffer"></buffer-data>
 
-            <chat-input v-bind:buffer="activeBuffer"></chat-input>
-        </div>
+        <chat-input v-bind:buffer="activeBuffer"></chat-input>
     </div>
 </template>
 
 <script>
-    const Messages = require('./Messages.vue');
+    const BufferData = require('./BufferData.vue');
     const ChatInput = require('./ChatInput.vue');
 
     let data = {
         buffers: [],
         activeBuffer: false
     };
+
+    function addMessageToBuffer (buffer, message) {
+        let messageList = document.getElementById('message-list');
+
+        buffer.unread = true;
+        buffer.messages.push(message);
+
+        if (buffer === data.activeBuffer) {
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+    }
 
     export default {
         data: function () {
@@ -43,7 +52,8 @@
                     let buffer = {
                         messages: [ message ],
                         name: bufferName,
-                        unread: true
+                        unread: true,
+                        active: false
                     };
 
                     data.buffers.push(buffer);
@@ -52,8 +62,7 @@
                         data.activeBuffer = buffer;
                     }
                 } else {
-                    data.buffers[bufferIndex].unread = true;
-                    data.buffers[bufferIndex].messages.push(message);
+                    addMessageToBuffer(data.buffers[bufferIndex], message);
                 }
             });
 
@@ -72,7 +81,8 @@
                     let buffer = {
                         messages: [ message ],
                         name: bufferName,
-                        unread: true
+                        unread: true,
+                        active: false
                     };
 
                     data.buffers.push(buffer);
@@ -81,15 +91,14 @@
                         data.activeBuffer = buffer;
                     }
                 } else {
-                    data.buffers[bufferIndex].unread = true;
-                    data.buffers[bufferIndex].messages.push(message);
+                    addMessageToBuffer(data.buffers[bufferIndex], message);
                 }
             });
 
             console.log('Messages component mounted.')
         },
         components: {
-            'messages': Messages,
+            'buffer-data': BufferData,
             'chat-input': ChatInput
         },
         methods: {

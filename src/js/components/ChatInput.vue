@@ -1,5 +1,6 @@
 <template>
     <form id="chat-form" v-on:submit="sendMessage">
+        <input type="hidden" v-bind:value="buffer.name" id="buffer-name" />
         <input type="text" placeholder="Message..." id="chat-input" />
     </form>
 </template>
@@ -17,8 +18,13 @@
             sendMessage: function (event) {
                 event.preventDefault();
                 const input = document.getElementById('chat-input');
+                const bufferName = document.getElementById('buffer-name').value;
 
-                console.log(input.value);
+                window.socket.emit('send-message', {
+                    to: bufferName,
+                    text: input.value
+                });
+
                 input.value = "";
             }
         }

@@ -9975,16 +9975,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
-var Messages = __webpack_require__(8);
+var BufferData = __webpack_require__(8);
 var ChatInput = __webpack_require__(11);
 
 var _data = {
     buffers: [],
     activeBuffer: false
 };
+
+function addMessageToBuffer(buffer, message) {
+    var messageList = document.getElementById('message-list');
+
+    buffer.unread = true;
+    buffer.messages.push(message);
+
+    if (buffer === _data.activeBuffer) {
+        messageList.scrollTop = messageList.scrollHeight;
+    }
+}
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -10006,7 +10015,8 @@ var _data = {
                 var buffer = {
                     messages: [message],
                     name: bufferName,
-                    unread: true
+                    unread: true,
+                    active: false
                 };
 
                 _data.buffers.push(buffer);
@@ -10015,8 +10025,7 @@ var _data = {
                     _data.activeBuffer = buffer;
                 }
             } else {
-                _data.buffers[bufferIndex].unread = true;
-                _data.buffers[bufferIndex].messages.push(message);
+                addMessageToBuffer(_data.buffers[bufferIndex], message);
             }
         });
 
@@ -10035,7 +10044,8 @@ var _data = {
                 var buffer = {
                     messages: [message],
                     name: bufferName,
-                    unread: true
+                    unread: true,
+                    active: false
                 };
 
                 _data.buffers.push(buffer);
@@ -10044,8 +10054,7 @@ var _data = {
                     _data.activeBuffer = buffer;
                 }
             } else {
-                _data.buffers[bufferIndex].unread = true;
-                _data.buffers[bufferIndex].messages.push(message);
+                addMessageToBuffer(_data.buffers[bufferIndex], message);
             }
         });
 
@@ -10053,7 +10062,7 @@ var _data = {
     },
 
     components: {
-        'messages': Messages,
+        'buffer-data': BufferData,
         'chat-input': ChatInput
     },
     methods: {
@@ -10088,9 +10097,9 @@ var Component = __webpack_require__(0)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/home/luna/git/irc-app/src/js/components/Messages.vue"
+Component.options.__file = "/home/luna/git/irc-app/src/js/components/BufferData.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] Messages.vue: functional components are not supported with templates, they should use render functions.")}
+if (Component.options.functional) {console.error("[vue-loader] BufferData.vue: functional components are not supported with templates, they should use render functions.")}
 
 /* hot reload */
 if (false) {(function () {
@@ -10099,9 +10108,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6a2b8019", Component.options)
+    hotAPI.createRecord("data-v-575d0e97", Component.options)
   } else {
-    hotAPI.reload("data-v-6a2b8019", Component.options)
+    hotAPI.reload("data-v-575d0e97", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -10117,6 +10126,12 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -10144,6 +10159,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return (_vm.buffer) ? _c('div', {
     attrs: {
+      "id": "buffer-data"
+    }
+  }, [_c('header', [_c('h3', [_vm._v(_vm._s(_vm.buffer.name))])]), _vm._v(" "), _c('div', {
+    attrs: {
       "id": "message-list"
     }
   }, _vm._l((_vm.buffer.messages), function(message) {
@@ -10154,13 +10173,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_vm._v(_vm._s(message.from))]), _vm._v(" "), _c('div', {
       staticClass: "text"
     }, [_vm._v(_vm._s(message.text))])])
-  })) : _vm._e()
+  }))]) : _vm._e()
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6a2b8019", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-575d0e97", module.exports)
   }
 }
 
@@ -10216,6 +10235,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['buffer'],
@@ -10230,8 +10250,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         sendMessage: function sendMessage(event) {
             event.preventDefault();
             var input = document.getElementById('chat-input');
+            var bufferName = document.getElementById('buffer-name').value;
 
-            console.log(input.value);
+            window.socket.emit('send-message', {
+                to: bufferName,
+                text: input.value
+            });
+
             input.value = "";
         }
     }
@@ -10250,6 +10275,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "submit": _vm.sendMessage
     }
   }, [_c('input', {
+    attrs: {
+      "type": "hidden",
+      "id": "buffer-name"
+    },
+    domProps: {
+      "value": _vm.buffer.name
+    }
+  }), _vm._v(" "), _c('input', {
     attrs: {
       "type": "text",
       "placeholder": "Message...",
@@ -10285,11 +10318,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "click": _vm.setActive
       }
     }, [_vm._v("\n            " + _vm._s(buffer.name) + "\n        ")])
-  })), _vm._v(" "), _c('div', {
-    attrs: {
-      "id": "buffer-data"
-    }
-  }, [_c('messages', {
+  })), _vm._v(" "), _c('buffer-data', {
     attrs: {
       "buffer": _vm.activeBuffer
     }
@@ -10297,7 +10326,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "buffer": _vm.activeBuffer
     }
-  })], 1)])
+  })], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
