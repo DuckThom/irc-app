@@ -165,7 +165,7 @@ module.exports = function normalizeComponent (
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(2);
-module.exports = __webpack_require__(12);
+module.exports = __webpack_require__(15);
 
 
 /***/ }),
@@ -9924,7 +9924,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(7),
   /* template */
-  __webpack_require__(11),
+  __webpack_require__(14),
   /* styles */
   null,
   /* scopeId */
@@ -9973,8 +9973,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 var Messages = __webpack_require__(8);
+var ChatInput = __webpack_require__(11);
 
 var _data = {
     buffers: [],
@@ -9986,7 +9991,7 @@ var _data = {
         return _data;
     },
     mounted: function mounted() {
-        window.socket.on('message-receive', function (eventData) {
+        window.socket.on('channel-message-receive', function (eventData) {
             var bufferName = eventData.to;
             var message = {
                 text: eventData.message,
@@ -10011,7 +10016,36 @@ var _data = {
                 }
             } else {
                 _data.buffers[bufferIndex].unread = true;
-                _data.buffers[bufferIndex].messages.unshift(message);
+                _data.buffers[bufferIndex].messages.push(message);
+            }
+        });
+
+        window.socket.on('private-message-receive', function (eventData) {
+            var bufferName = eventData.from;
+            var message = {
+                text: eventData.message,
+                from: eventData.from
+            };
+
+            var bufferIndex = _data.buffers.findIndex(function (buf) {
+                return buf.name === bufferName;
+            });
+
+            if (bufferIndex === -1) {
+                var buffer = {
+                    messages: [message],
+                    name: bufferName,
+                    unread: true
+                };
+
+                _data.buffers.push(buffer);
+
+                if (_data.buffers.length === 1) {
+                    _data.activeBuffer = buffer;
+                }
+            } else {
+                _data.buffers[bufferIndex].unread = true;
+                _data.buffers[bufferIndex].messages.push(message);
             }
         });
 
@@ -10019,7 +10053,8 @@ var _data = {
     },
 
     components: {
-        'messages': Messages
+        'messages': Messages,
+        'chat-input': ChatInput
     },
     methods: {
         setActive: function setActive(event) {
@@ -10133,6 +10168,107 @@ if (false) {
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var disposed = false
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(12),
+  /* template */
+  __webpack_require__(13),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/home/luna/git/irc-app/src/js/components/ChatInput.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ChatInput.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5b35d955", Component.options)
+  } else {
+    hotAPI.reload("data-v-5b35d955", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['buffer'],
+    data: function data() {
+        return {};
+    },
+    mounted: function mounted() {
+        console.log('Messages component mounted.');
+    },
+
+    methods: {
+        sendMessage: function sendMessage(event) {
+            event.preventDefault();
+            var input = document.getElementById('chat-input');
+
+            console.log(input.value);
+            input.value = "";
+        }
+    }
+});
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('form', {
+    attrs: {
+      "id": "chat-form"
+    },
+    on: {
+      "submit": _vm.sendMessage
+    }
+  }, [_c('input', {
+    attrs: {
+      "type": "text",
+      "placeholder": "Message...",
+      "id": "chat-input"
+    }
+  })])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5b35d955", module.exports)
+  }
+}
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     attrs: {
@@ -10149,11 +10285,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "click": _vm.setActive
       }
     }, [_vm._v("\n            " + _vm._s(buffer.name) + "\n        ")])
-  })), _vm._v(" "), _c('messages', {
+  })), _vm._v(" "), _c('div', {
+    attrs: {
+      "id": "buffer-data"
+    }
+  }, [_c('messages', {
     attrs: {
       "buffer": _vm.activeBuffer
     }
-  })], 1)
+  }), _vm._v(" "), _c('chat-input', {
+    attrs: {
+      "buffer": _vm.activeBuffer
+    }
+  })], 1)])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -10164,7 +10308,7 @@ if (false) {
 }
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

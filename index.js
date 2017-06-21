@@ -32,11 +32,18 @@ function createWindow () {
     ircClient = new irc.Client(config.irc.server, config.irc.nickname, config.irc.config);
 
     ircClient.addListener('message', function (from, to, message) {
-        io.sockets.emit('message-receive', {
+        io.sockets.emit('channel-message-receive', {
             from: from,
             to: to,
             message: message
         })
+    });
+
+    ircClient.addListener('pm', function (from, message) {
+        io.sockets.emit('private-message-receive', {
+            from: from,
+            message: message
+        });
     });
 
     // Create the browser window.

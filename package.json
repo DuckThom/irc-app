@@ -5,7 +5,8 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "run-dev": "npm run dev && npm run start",
+    "run-dev": "npm run development && npm run start",
+    "run-watch": "npm run watch & sleep 2 && npm run start",
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
