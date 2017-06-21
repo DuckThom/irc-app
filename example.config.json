@@ -1,0 +1,16 @@
+{
+  "irc": {
+    "server": "chat.freenode.net",
+    "nickname": "irc-app",
+    "config": {
+      "channels": [
+        "#freenode"
+      ],
+      "userName": "irc-app",
+      "password": "",
+      "secure": true,
+      "port": 7000,
+      "selfSigned": false
+    }
+  }
+}

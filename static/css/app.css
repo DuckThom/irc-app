@@ -1,0 +1,54 @@
+#message-list {
+  background-image: linear-gradient(135deg, #5EFCE8 0%, #736EFE 100%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  overflow-y: auto;
+}
+
+#message-list .message {
+  background: white;
+  padding: 10px;
+  color: #333;
+}
+
+#buffer-list {
+  padding: 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+#buffer-list .buffer-button {
+  background: #333;
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 5px;
+  color: white;
+  margin-right: 10px;
+  font-size: 17px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+*,
+*:after,
+*:before {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
