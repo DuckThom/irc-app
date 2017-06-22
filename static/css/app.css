@@ -8,6 +8,20 @@
   background-image: linear-gradient(135deg, #92FFC0 0%, #002661 100%);
 }
 
+#buffer-data .no-buffer-selected {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: #333;
+}
+
 #buffer-data header {
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -138,6 +152,78 @@
   font-family: 'PT Mono', monospace;
 }
 
+#join-button {
+  position: absolute;
+  bottom: 0;
+  width: 200px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#join-button #join-channel-button {
+  font-size: 30px;
+  height: 45px;
+  width: 45px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+}
+
+#join-button #join-channel-button:hover {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+#join-button #join-overlay {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+#join-button #join-overlay.hidden {
+  display: none;
+}
+
+#join-button #join-overlay #close-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 75px;
+  height: 75px;
+  font-size: 30px;
+  background: transparent;
+  border: 0;
+  color: white;
+  border-bottom-left-radius: 4px;
+}
+
+#join-button #join-overlay #close-overlay:hover {
+  background: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#join-button #join-overlay input {
+  font-size: 22px;
+  padding: 14px;
+  border: none;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
 html,
 body {
   font-family: 'PT Sans', sans-serif;
@@ -145,7 +231,7 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  min-width: 550px;
+  min-width: 730px;
 }
 
 *,
@@ -153,5 +239,9 @@ body {
 *:before {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+
+button:focus {
+  outline: none;
 }
 

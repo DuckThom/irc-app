@@ -1,6 +1,7 @@
-@import "messages"
+@import "bufferData"
 @import "buffers"
 @import "chatInput"
+@import "joinButton"
 
 @import url("https://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=cyrillic,cyrillic-ext,latin-ext")
 @import url('https://fonts.googleapis.com/css?family=PT+Mono&subset=cyrillic,cyrillic-ext,latin-ext')
@@ -11,7 +12,10 @@ html, body
   padding: 0
   height: 100%
   width: 100%
-  min-width: 550px
+  min-width: 730px
 
 *, *:after, *:before
   box-sizing: border-box
+
+button:focus
+  outline: none

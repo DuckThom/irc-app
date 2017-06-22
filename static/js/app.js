@@ -9864,7 +9864,7 @@ module.exports = Vue$3;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(3);
-module.exports = __webpack_require__(16);
+module.exports = __webpack_require__(19);
 
 
 /***/ }),
@@ -9924,7 +9924,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(7),
   /* template */
-  __webpack_require__(15),
+  __webpack_require__(18),
   /* styles */
   null,
   /* scopeId */
@@ -9981,10 +9981,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 var BufferData = __webpack_require__(8);
 var ChatInput = __webpack_require__(11);
-var config = __webpack_require__(14);
+var JoinButton = __webpack_require__(14);
+var config = __webpack_require__(17);
 var Vue = __webpack_require__(1);
 
 var _data = {
@@ -10125,7 +10128,8 @@ var methods = {
 
     components: {
         'buffer-data': BufferData,
-        'chat-input': ChatInput
+        'chat-input': ChatInput,
+        'join-button': JoinButton
     },
     methods: methods
 });
@@ -10392,6 +10396,173 @@ if (false) {
 
 /***/ }),
 /* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(15),
+  /* template */
+  __webpack_require__(16),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/home/luna/git/irc-app/src/js/components/JoinButton.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] JoinButton.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-43b45689", Component.options)
+  } else {
+    hotAPI.reload("data-v-43b45689", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+var _data = {
+    channel: "",
+    overlayHidden: true
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return _data;
+    },
+    methods: {
+        joinChannel: function joinChannel() {
+            console.log(_data.channel);
+
+            window.socket.emit('join-channel', {
+                channel: _data.channel
+            });
+
+            _data.channel = "";
+
+            this.closeOverlay();
+        },
+
+        closeOverlay: function closeOverlay() {
+            console.log('closing overlay');
+
+            _data.overlayHidden = true;
+        },
+
+        openOverlay: function openOverlay() {
+            console.log('opening overlay');
+
+            _data.overlayHidden = false;
+        }
+    }
+});
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    attrs: {
+      "id": "join-button"
+    }
+  }, [_c('div', {
+    class: {
+      'hidden': _vm.overlayHidden
+    },
+    attrs: {
+      "id": "join-overlay"
+    }
+  }, [_c('button', {
+    attrs: {
+      "id": "close-overlay"
+    },
+    on: {
+      "click": _vm.closeOverlay
+    }
+  }, [_vm._v("x")]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model.trim",
+      value: (_vm.channel),
+      expression: "channel",
+      modifiers: {
+        "trim": true
+      }
+    }],
+    attrs: {
+      "placeholder": "Channel or username"
+    },
+    domProps: {
+      "value": (_vm.channel)
+    },
+    on: {
+      "keyup": function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
+        _vm.joinChannel($event)
+      },
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.channel = $event.target.value.trim()
+      },
+      "blur": function($event) {
+        _vm.$forceUpdate()
+      }
+    }
+  })]), _vm._v(" "), _c('button', {
+    attrs: {
+      "id": "join-channel-button"
+    },
+    on: {
+      "click": _vm.openOverlay
+    }
+  }, [_vm._v("+")])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-43b45689", module.exports)
+  }
+}
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -10410,7 +10581,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10422,14 +10593,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "id": "buffer-list"
     }
-  }, _vm._l((_vm.buffers), function(buffer) {
+  }, [_vm._l((_vm.buffers), function(buffer) {
     return _c('button', {
       staticClass: "buffer-button",
       on: {
         "click": _vm.setActive
       }
     }, [_vm._v("\n            " + _vm._s(buffer.name) + "\n        ")])
-  })), _vm._v(" "), _c('buffer-data', {
+  }), _vm._v(" "), _c('join-button')], 2), _vm._v(" "), _c('buffer-data', {
     attrs: {
       "buffer": _vm.activeBuffer
     }
@@ -10460,7 +10631,7 @@ if (false) {
 }
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

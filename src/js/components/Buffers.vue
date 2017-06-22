@@ -4,6 +4,8 @@
             <button class="buffer-button" v-on:click="setActive" v-for="buffer in buffers">
                 {{ buffer.name }}
             </button>
+
+            <join-button></join-button>
         </div>
 
         <buffer-data v-bind:buffer="activeBuffer"></buffer-data>
@@ -21,6 +23,7 @@
 <script>
     const BufferData = require('./BufferData.vue');
     const ChatInput = require('./ChatInput.vue');
+    const JoinButton = require('./JoinButton.vue');
     const config = require('../../../config.json');
     const Vue = require('vue');
 
@@ -159,7 +162,8 @@
         },
         components: {
             'buffer-data': BufferData,
-            'chat-input': ChatInput
+            'chat-input': ChatInput,
+            'join-button': JoinButton
         },
         methods: methods
     }

@@ -28,7 +28,7 @@ function createWindow () {
     ircClient = new irc.Client(config.irc.server, config.irc.nickname, config.irc.config);
 
     ircClient.addListener('message', function (from, to, message) {
-        if (to.indexOf("#") > -1 || to === config.irc.nickname) {
+        if (to.indexOf("#") > -1) {
             io.sockets.emit('channel-message-receive', {
                 from: from,
                 to: to,
@@ -68,7 +68,7 @@ function createWindow () {
     win = new BrowserWindow({
         width: 1368,
         height: 768,
-        minWidth: 550,
+        minWidth: 730,
         minHeight: 300
     });
 
