@@ -2,29 +2,37 @@
   "name": "irc-app",
   "version": "0.1.0",
   "description": "Electron based IRC client",
+  "license": "GPL-3.0",
   "main": "index.js",
-  "devDependencies": {},
+  "author": {
+    "name": "Thomas Wiringa",
+    "email": "thomas.wiringa@gmail.com"
+  },
+  "build": {
+    "appId": "nl.tjwiringa.irc-app",
+    "mac": {
+      "category": "Social"
+    }
+  },
   "scripts": {
     "run-dev": "npm run development && npm run start",
-    "run-watch": "npm run watch & sleep 2 && npm run start",
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch-poll": "npm run watch -- --watch-poll",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "prod": "npm run production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "start": "./node_modules/.bin/electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
-  "author": "Thomas Wiringa",
-  "license": "GPL-3.0",
   "dependencies": {
     "cross-env": "^5.0.1",
-    "electron": "^1.6.10",
     "irc": "matrix-org/node-irc",
     "laravel-mix": "^1.0.3",
     "socket.io": "^2.0.3",
     "vue": "^2.3.4"
+  },
+  "devDependencies": {
+    "electron": "^1.6.10",
+    "electron-builder": "^19.6.3"
   }
 }

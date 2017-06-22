@@ -1,31 +1,31 @@
 <template>
-    <form id="chat-form" v-on:submit="sendMessage">
+    <div id="chat-form" v-on:submit="sendMessage">
         <input type="hidden" v-bind:value="buffer.name" id="buffer-name" />
-        <input type="text" placeholder="Message..." id="chat-input" />
-    </form>
+        <input v-model="messageText" placeholder="Message..." id="chat-input" v-on:keyup.enter="sendMessage" />
+    </div>
 </template>
 
 <script>
+    let data = {
+        messageText: ''
+    };
+
     export default {
         props: ['buffer'],
         data: function () {
-            return {};
+            return data;
         },
         mounted() {
             console.log('Messages component mounted.')
         },
         methods: {
-            sendMessage: function (event) {
-                event.preventDefault();
-                const input = document.getElementById('chat-input');
-                const bufferName = document.getElementById('buffer-name').value;
-
+            sendMessage: function () {
                 window.socket.emit('send-message', {
-                    to: bufferName,
-                    text: input.value
+                    to: this.buffer.name,
+                    text: this.messageText
                 });
 
-                input.value = "";
+                this.messageText = '';
             }
         }
     }

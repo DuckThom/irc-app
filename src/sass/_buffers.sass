@@ -6,7 +6,9 @@
   width: 200px
   display: flex
   flex-direction: column
-  background: #B24B42
+  background: linear-gradient(to bottom, #B24B42, #6E170B)
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)
+  z-index: 10
 
   .buffer-button
     background: transparent
@@ -21,4 +23,21 @@
 
     &:hover
       background: rgba(255,255,255,0.3)
+      cursor: pointer
+
+#buffer
+  #scroll-to-bottom-button
+    position: fixed
+    right: 20px
+    bottom: 60px
+    height: 50px
+    width: 50px
+    font-size: 25px
+    border: 0
+    border-radius: 30px
+    background-color: #92FFC0
+    color: #002661
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)
+
+    &:hover
       cursor: pointer

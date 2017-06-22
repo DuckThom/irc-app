@@ -28,7 +28,7 @@ function createWindow () {
     ircClient = new irc.Client(config.irc.server, config.irc.nickname, config.irc.config);
 
     ircClient.addListener('message', function (from, to, message) {
-        if (to.indexOf("#") > -1) {
+        if (to.indexOf("#") > -1 || to === config.irc.nickname) {
             io.sockets.emit('channel-message-receive', {
                 from: from,
                 to: to,
@@ -40,6 +40,12 @@ function createWindow () {
     ircClient.addListener('pm', function (from, message) {
         io.sockets.emit('private-message-receive', {
             from: from,
+            message: message
+        });
+    });
+
+    ircClient.addListener('error', function(message) {
+        io.sockets.emit('irc-client-error', {
             message: message
         });
     });
@@ -59,7 +65,15 @@ function createWindow () {
     });
 
     // Create the browser window.
-    win = new BrowserWindow({width: 1368, height: 768});
+    win = new BrowserWindow({
+        width: 1368,
+        height: 768,
+        minWidth: 550,
+        minHeight: 300
+    });
+
+    // Remove the menu bar
+    win.setMenu(null);
 
     // and load the index.html of the app.
     win.loadURL(url.format({

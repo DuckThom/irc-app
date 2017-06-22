@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -162,35 +162,6 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(2);
-module.exports = __webpack_require__(15);
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(3);
-
-var Vue = __webpack_require__(4);
-
-Vue.component('buffers', __webpack_require__(6));
-
-window.vueApp = new Vue({
-    el: '#app',
-    components: ['buffers']
-});
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-window.socket = io('http://localhost:8888');
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9889,6 +9860,35 @@ module.exports = Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(3);
+module.exports = __webpack_require__(16);
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(4);
+
+var Vue = __webpack_require__(1);
+
+Vue.component('buffers', __webpack_require__(6));
+
+window.vueApp = new Vue({
+    el: '#app',
+    components: ['buffers']
+});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+window.socket = io('http://localhost:8888');
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
@@ -9924,7 +9924,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(7),
   /* template */
-  __webpack_require__(14),
+  __webpack_require__(15),
   /* styles */
   null,
   /* scopeId */
@@ -9975,36 +9975,106 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 var BufferData = __webpack_require__(8);
 var ChatInput = __webpack_require__(11);
+var config = __webpack_require__(14);
+var Vue = __webpack_require__(1);
 
 var _data = {
+    bottomOfMessageList: true,
     buffers: [],
     activeBuffer: false
 };
 
-function addMessageToBuffer(buffer, message) {
-    var messageList = document.getElementById('message-list');
+var methods = {
+    setActive: function setActive(event) {
+        var bufferName = event.target.innerText;
+        var bufferIndex = _data.buffers.findIndex(function (buf) {
+            return buf.name === bufferName;
+        });
 
-    buffer.unread = true;
-    buffer.messages.push(message);
+        _data.activeBuffer = _data.buffers[bufferIndex];
 
-    if (buffer === _data.activeBuffer) {
-        messageList.scrollTop = messageList.scrollHeight;
+        methods.checkBottomMessageList();
+        methods.scrollToLastMessage();
+    },
+
+    scrollToBottom: function scrollToBottom(event) {
+        methods.scrollToLastMessage(true);
+    },
+
+    checkBottomMessageList: function checkBottomMessageList() {
+        Vue.nextTick(function () {
+            var ml = document.getElementById('message-list');
+
+            if (ml === null) {
+                return;
+            }
+
+            _data.bottomOfMessageList = ml.offsetHeight + ml.scrollTop === ml.scrollHeight;
+        });
+    },
+
+    addMessageToBuffer: function addMessageToBuffer(buffer, message) {
+        buffer.unread = true;
+        buffer.messages.push(message);
+
+        if (buffer.name === _data.activeBuffer.name) {
+            Vue.nextTick(function () {
+                methods.scrollToLastMessage();
+            });
+        }
+    },
+
+    scrollToLastMessage: function scrollToLastMessage() {
+        var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+        var messageList = document.getElementById('message-list');
+
+        if (messageList === null) {
+            return;
+        }
+
+        // Check if the user is not at the bottom of the list
+        if (!_data.bottomOfMessageList && !force) {
+            return;
+        }
+
+        var messages = messageList.getElementsByClassName('message');
+
+        messages[messages.length - 1].scrollIntoView({
+            block: 'end',
+            behavior: 'smooth'
+        });
     }
-}
+};
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return _data;
     },
     mounted: function mounted() {
+        this.$on('message-scroll', function (eventData) {
+            _data.bottomOfMessageList = eventData.bottom;
+        });
+
+        window.addEventListener('resize', function () {
+            methods.checkBottomMessageList();
+        });
+
         window.socket.on('channel-message-receive', function (eventData) {
             var bufferName = eventData.to;
             var message = {
                 text: eventData.message,
-                from: eventData.from
+                from: eventData.from,
+                highlight: eventData.message.indexOf(config.irc.nickname) > -1
             };
 
             var bufferIndex = _data.buffers.findIndex(function (buf) {
@@ -10020,12 +10090,8 @@ function addMessageToBuffer(buffer, message) {
                 };
 
                 _data.buffers.push(buffer);
-
-                if (_data.buffers.length === 1) {
-                    _data.activeBuffer = buffer;
-                }
             } else {
-                addMessageToBuffer(_data.buffers[bufferIndex], message);
+                methods.addMessageToBuffer(_data.buffers[bufferIndex], message);
             }
         });
 
@@ -10049,12 +10115,8 @@ function addMessageToBuffer(buffer, message) {
                 };
 
                 _data.buffers.push(buffer);
-
-                if (_data.buffers.length === 1) {
-                    _data.activeBuffer = buffer;
-                }
             } else {
-                addMessageToBuffer(_data.buffers[bufferIndex], message);
+                methods.addMessageToBuffer(_data.buffers[bufferIndex], message);
             }
         });
 
@@ -10065,19 +10127,7 @@ function addMessageToBuffer(buffer, message) {
         'buffer-data': BufferData,
         'chat-input': ChatInput
     },
-    methods: {
-        setActive: function setActive(event) {
-            var bufferName = event.target.innerText;
-
-            var bufferIndex = _data.buffers.findIndex(function (buf) {
-                return buf.name === bufferName;
-            });
-
-            _data.activeBuffer = _data.buffers[bufferIndex];
-
-            console.log("switched to " + bufferName);
-        }
-    }
+    methods: methods
 });
 
 /***/ }),
@@ -10141,6 +10191,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['buffer'],
@@ -10148,7 +10204,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {};
     },
     mounted: function mounted() {
-        console.log('Messages component mounted.');
+        console.log('BufferData component mounted.');
+    },
+
+    methods: {
+        checkBottomOfMessages: function checkBottomOfMessages(event) {
+            var messageList = event.target;
+
+            this.$parent.$emit('message-scroll', {
+                bottom: messageList.offsetHeight + messageList.scrollTop === messageList.scrollHeight
+            });
+        }
     }
 });
 
@@ -10157,23 +10223,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (_vm.buffer) ? _c('div', {
+  return _c('div', {
     attrs: {
       "id": "buffer-data"
     }
-  }, [_c('header', [_c('h3', [_vm._v(_vm._s(_vm.buffer.name))])]), _vm._v(" "), _c('div', {
+  }, [(_vm.buffer) ? _c('div', [_c('header', [_c('h3', [_vm._v(_vm._s(_vm.buffer.name))])]), _vm._v(" "), _c('div', {
     attrs: {
       "id": "message-list"
+    },
+    on: {
+      "scroll": _vm.checkBottomOfMessages
     }
   }, _vm._l((_vm.buffer.messages), function(message) {
     return _c('div', {
-      staticClass: "message"
+      staticClass: "message",
+      class: {
+        highlight: message.highlight
+      }
     }, [_c('span', {
-      staticClass: "from"
-    }, [_vm._v(_vm._s(message.from))]), _vm._v(" "), _c('div', {
+      staticClass: "sender"
+    }, [_vm._v("@" + _vm._s(message.from))]), _vm._v(" "), _c('div', {
       staticClass: "text"
     }, [_vm._v(_vm._s(message.text))])])
-  }))]) : _vm._e()
+  }))]) : _c('div', {
+    staticClass: "no-buffer-selected"
+  }, [_c('h2', [_vm._v("Select a buffer on the left or join a new channel")])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -10237,27 +10311,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+var _data = {
+    messageText: ''
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['buffer'],
     data: function data() {
-        return {};
+        return _data;
     },
     mounted: function mounted() {
         console.log('Messages component mounted.');
     },
 
     methods: {
-        sendMessage: function sendMessage(event) {
-            event.preventDefault();
-            var input = document.getElementById('chat-input');
-            var bufferName = document.getElementById('buffer-name').value;
-
+        sendMessage: function sendMessage() {
             window.socket.emit('send-message', {
-                to: bufferName,
-                text: input.value
+                to: this.buffer.name,
+                text: this.messageText
             });
 
-            input.value = "";
+            this.messageText = '';
         }
     }
 });
@@ -10267,7 +10341,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('form', {
+  return _c('div', {
     attrs: {
       "id": "chat-form"
     },
@@ -10283,10 +10357,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": _vm.buffer.name
     }
   }), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.messageText),
+      expression: "messageText"
+    }],
     attrs: {
-      "type": "text",
       "placeholder": "Message...",
       "id": "chat-input"
+    },
+    domProps: {
+      "value": (_vm.messageText)
+    },
+    on: {
+      "keyup": function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
+        _vm.sendMessage($event)
+      },
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.messageText = $event.target.value
+      }
     }
   })])
 },staticRenderFns: []}
@@ -10300,6 +10392,25 @@ if (false) {
 
 /***/ }),
 /* 14 */
+/***/ (function(module, exports) {
+
+module.exports = {
+	"irc": {
+		"server": "calypso.lunamoonfang.nl",
+		"nickname": "Aloy",
+		"config": {
+			"channels": [],
+			"userName": "Aloy",
+			"password": "freenode:20Audi10",
+			"secure": true,
+			"port": 8123,
+			"selfSigned": true
+		}
+	}
+};
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10322,7 +10433,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "buffer": _vm.activeBuffer
     }
-  }), _vm._v(" "), _c('chat-input', {
+  }), _vm._v(" "), (!_vm.bottomOfMessageList) ? _c('div', [_c('button', {
+    attrs: {
+      "id": "scroll-to-bottom-button"
+    },
+    on: {
+      "click": _vm.scrollToBottom
+    }
+  }, [_c('i', {
+    staticClass: "fa fa-arrow-down",
+    attrs: {
+      "aria-hidden": "true"
+    }
+  })])]) : _vm._e(), _vm._v(" "), _c('chat-input', {
     attrs: {
       "buffer": _vm.activeBuffer
     }
@@ -10337,7 +10460,7 @@ if (false) {
 }
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
