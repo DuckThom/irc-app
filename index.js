@@ -4,6 +4,7 @@ const url = require('url');
 const irc = require('irc');
 const http = require('http').createServer();
 const io = require('socket.io')(http);
+const debug = require('debug');
 
 let config;
 
@@ -23,45 +24,67 @@ const SRC_PATH = path.join(__dirname, 'src');
 let win;
 let ircClient;
 
+function stripUnicode(str) {
+    return str.replace(/[\u{0080}-\u{FFFF}]/gu, "");
+}
+
 function createWindow () {
 
     ircClient = new irc.Client(config.irc.server, config.irc.nickname, config.irc.config);
 
     ircClient.addListener('message', function (from, to, message) {
-        if (to.indexOf("#") > -1) {
+        debug('node-irc')({
+            type: "message",
+            from: from,
+            to: to,
+            message: stripUnicode(message)
+        });
+
+        if (to.indexOf("#") > -1 || from === config.irc.nickname) {
             io.sockets.emit('channel-message-receive', {
                 from: from,
                 to: to,
-                message: message
+                message: stripUnicode(message)
             });
         }
     });
 
     ircClient.addListener('pm', function (from, message) {
+        debug('node-irc')({
+            type: "pm",
+            from: from,
+            message: stripUnicode(message)
+        });
+
         io.sockets.emit('private-message-receive', {
             from: from,
-            message: message
+            message: stripUnicode(message)
         });
     });
 
     ircClient.addListener('error', function(message) {
+        debug('node-irc')({
+            type: "error",
+            message: stripUnicode(message)
+        });
+
         io.sockets.emit('irc-client-error', {
-            message: message
+            message: stripUnicode(message)
         });
     });
 
     io.on('connection', function (socket) {
+        debug('socket.io')('Client connected');
+
         socket.on('send-message', function (data) {
             ircClient.say(data.to, data.text);
 
             io.sockets.emit('channel-message-receive', {
                 from: config.irc.nickname,
                 to: data.to,
-                message: data.text
+                message: stripUnicode(data.text)
             });
         });
-
-        console.log("Socket.io connection!");
     });
 
     // Create the browser window.
@@ -83,13 +106,16 @@ function createWindow () {
     }));
 
     // Open the DevTools.
-    win.webContents.openDevTools();
+    if (debug('irc-app').enabled) {
+        win.webContents.openDevTools();
+    }
 
     // Emitted when the window is closed.
     win.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
+        ircClient.disconnect();
         win = null
     });
 }

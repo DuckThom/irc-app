@@ -9932,7 +9932,7 @@ var Component = __webpack_require__(0)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/home/luna/git/irc-app/src/js/components/Buffers.vue"
+Component.options.__file = "/home/luna/Git/irc-app/src/js/components/Buffers.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Buffers.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -10151,7 +10151,7 @@ var Component = __webpack_require__(0)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/home/luna/git/irc-app/src/js/components/BufferData.vue"
+Component.options.__file = "/home/luna/Git/irc-app/src/js/components/BufferData.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] BufferData.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -10278,7 +10278,7 @@ var Component = __webpack_require__(0)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/home/luna/git/irc-app/src/js/components/ChatInput.vue"
+Component.options.__file = "/home/luna/Git/irc-app/src/js/components/ChatInput.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ChatInput.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -10411,7 +10411,7 @@ var Component = __webpack_require__(0)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/home/luna/git/irc-app/src/js/components/JoinButton.vue"
+Component.options.__file = "/home/luna/Git/irc-app/src/js/components/JoinButton.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] JoinButton.vue: functional components are not supported with templates, they should use render functions.")}
 
