@@ -158,6 +158,25 @@
                 }
             });
 
+            window.socket.on('query-start', function (eventData) {
+                let bufferName = eventData.nick;
+
+                let bufferIndex = data.buffers.findIndex(function (buf) {
+                    return buf.name === bufferName;
+                });
+
+                if (bufferIndex === -1) {
+                    let buffer = {
+                        messages: [ ],
+                        name: bufferName,
+                        unread: true,
+                        active: false
+                    };
+
+                    data.buffers.push(buffer);
+                }
+            });
+
             console.log('Messages component mounted.')
         },
         components: {

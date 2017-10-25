@@ -25,7 +25,13 @@ let win;
 let ircClient;
 
 function stripUnicode(str) {
-    return str.replace(/[\u{0080}-\u{FFFF}]/gu, "");
+    debug('irc-app')("Stripping unicode from: " + str);
+
+    if (typeof str === 'string') {
+        return str.replace(/[\u{0080}-\u{FFFF}]/gu, "");
+    }
+
+    return str;
 }
 
 function createWindow () {
@@ -73,6 +79,13 @@ function createWindow () {
         });
     });
 
+    ircClient.addListener('raw', function (message) {
+        debug('node-irc')({
+            type: "raw",
+            data: message
+        });
+    });
+
     io.on('connection', function (socket) {
         debug('socket.io')('Client connected');
 
@@ -84,6 +97,20 @@ function createWindow () {
                 to: data.to,
                 message: stripUnicode(data.text)
             });
+        });
+
+        socket.on('join-channel', function (data) {
+            const channel = data.channel;
+
+            if (channel.indexOf('#') === -1) {
+                io.sockets.emit('query-start', {
+                    nick: channel
+                });
+
+                return;
+            }
+
+            ircClient.join(data.channel);
         });
     });
 

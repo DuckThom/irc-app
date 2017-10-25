@@ -10123,6 +10123,25 @@ var methods = {
             }
         });
 
+        window.socket.on('query-start', function (eventData) {
+            var bufferName = eventData.nick;
+
+            var bufferIndex = _data.buffers.findIndex(function (buf) {
+                return buf.name === bufferName;
+            });
+
+            if (bufferIndex === -1) {
+                var buffer = {
+                    messages: [],
+                    name: bufferName,
+                    unread: true,
+                    active: false
+                };
+
+                _data.buffers.push(buffer);
+            }
+        });
+
         console.log('Messages component mounted.');
     },
 
@@ -10567,15 +10586,13 @@ if (false) {
 
 module.exports = {
 	"irc": {
-		"server": "calypso.lunamoonfang.nl",
-		"nickname": "Aloy",
+		"server": "chat.freenode.net",
+		"nickname": "irc-app-test",
 		"config": {
 			"channels": [],
-			"userName": "Aloy",
-			"password": "freenode:20Audi10",
 			"secure": true,
-			"port": 8123,
-			"selfSigned": true
+			"port": 7000,
+			"selfSigned": false
 		}
 	}
 };
